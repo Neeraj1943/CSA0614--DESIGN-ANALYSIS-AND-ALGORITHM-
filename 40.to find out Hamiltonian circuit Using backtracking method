@@ -1,0 +1,71 @@
+#include <stdio.h>
+
+#define V 5  // Define the number of vertices
+
+int isSafe(int v, int pos, int path[], int graph[V][V]) {
+    if (graph[path[pos - 1]][v] == 0)  // Check if the vertex can be added to the path
+        return 0;
+
+    for (int i = 0; i < pos; i++) {
+        if (path[i] == v)  // Check if the vertex is already in the path
+            return 0;
+    }
+
+    return 1;
+}
+
+int hamiltonianCycleUtil(int graph[V][V], int path[], int pos) {
+    if (pos == V) {
+        if (graph[path[pos - 1]][path[0]] == 1)  // If the last vertex is connected to the first vertex
+        {
+            return 1;  // Hamiltonian cycle found
+        } else {
+            return 0;  // Hamiltonian cycle not found
+        }
+    }
+
+    for (int v = 1; v < V; v++) {
+        if (isSafe(v, pos, path, graph)) {
+            path[pos] = v;
+
+            if (hamiltonianCycleUtil(graph, path, pos + 1) == 1)
+                return 1;
+
+            path[pos] = -1;  // Backtrack
+        }
+    }
+
+    return 0;
+}
+
+void hamiltonianCycle(int graph[V][V]) {
+    int path[V];
+    for (int i = 0; i < V; i++)
+        path[i] = -1;  // Initialize path array
+
+    path[0] = 0;  // Start from the first vertex
+
+    if (hamiltonianCycleUtil(graph, path, 1) == 0) {
+        printf("No Hamiltonian cycle exists.\n");
+        return;
+    }
+
+    printf("Hamiltonian cycle exists: \n");
+    for (int i = 0; i < V; i++)
+        printf("%d -> ", path[i]);
+    printf("%d\n", path[0]);
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 1, 1, 1, 0},
+        {1, 0, 1, 0, 1},
+        {1, 1, 0, 1, 0},
+        {1, 0, 1, 0, 1},
+        {0, 1, 0, 1, 0}
+    };
+
+    hamiltonianCycle(graph);
+
+    return 0;
+}
