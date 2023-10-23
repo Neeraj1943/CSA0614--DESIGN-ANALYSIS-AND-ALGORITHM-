@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define N 4
+
+// Function to find the minimum cost in a given matrix
+int findMinCost(int costMatrix[N][N], int assignment[N], int assignedTask[N], int worker, int task) {
+    int minCost = INT_MAX;
+
+    for (int i = 0; i < N; i++) {
+        if (!assignedTask[i] && costMatrix[worker][i] < minCost) {
+            minCost = costMatrix[worker][i];
+            assignment[i] = worker;
+        }
+    }
+
+    return minCost;
+}
+
+// Function to perform the branch and bound algorithm for the Assignment Problem
+void branchAndBound(int costMatrix[N][N]) {
+    int assignment[N];
+    int assignedTask[N] = {0};
+    int totalCost = 0;
+
+    for (int i = 0; i < N; i++) {
+        assignment[i] = -1;
+    }
+
+    for (int worker = 0; worker < N; worker++) {
+        totalCost += findMinCost(costMatrix, assignment, assignedTask, worker, 0);
+    }
+
+    printf("Minimum Cost: %d\n", totalCost);
+    printf("Assignment: ");
+    for (int i = 0; i < N; i++) {
+        printf("Worker %d -> Task %d, ", assignment[i], i);
+    }
+}
+
+int main() {
+    int costMatrix[N][N] = {
+        {9, 2, 7, 8},
+        {6, 4, 3, 7},
+        {5, 8, 1, 8},
+        {7, 6, 9, 4}
+    };
+
+    branchAndBound(costMatrix);
+
+    return 0;
+}
