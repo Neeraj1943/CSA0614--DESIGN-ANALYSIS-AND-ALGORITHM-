@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define V 4 // Number of vertices in the graph
+
+int graph[V][V] = {
+    {0, 10, 15, 20},
+    {10, 0, 35, 25},
+    {15, 35, 0, 30},
+    {20, 25, 30, 0}
+};
+
+int visitedAll = (1 << V) - 1; // Binary mask to track visited nodes
+
+int tsp(int mask, int pos) {
+    if (mask == visitedAll) {
+        return graph[pos][0];
+    }
+
+    int minCost = INT_MAX;
+
+    for (int city = 0; city < V; city++) {
+        if ((mask & (1 << city)) == 0) {
+            int newCost = graph[pos][city] + tsp(mask | (1 << city), city);
+            minCost = (newCost < minCost) ? newCost : minCost;
+        }
+    }
+
+    return minCost;
+}
+
+int main() {
+    int startVertex = 0; // Start from vertex 0
+
+    int optimalCost = tsp(1 << startVertex, startVertex);
+
+    printf("The optimal cost is %d\n", optimalCost);
+
+    return 0;
+}
